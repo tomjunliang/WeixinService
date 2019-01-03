@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.weixin.dao.CustomerOrderDao">
+    <select id="queryService" parameterType="int" resultType="com.weixin.pojo.Servcie">
+        select id,name,note,photo
+        from services
+        where data_config_id=#{id} AND status="NEW";
+    </select>
+    <select id="queryDataService" resultType="com.weixin.pojo.DataService">
+   select id,name,note
+   from data_configs
+   where type_code="SERVICE_TYPE" and status = 0;
+
+    </select>
+
+
+    <insert id="insertOrder" parameterType="com.weixin.pojo.Orders" >
+         INSERT INTO orders (
+         linkman,
+         linkphone,
+         address,
+         service_id,
+         note,
+         no,
+         payment_status,
+         status,
+         openid,
+         user_id,
+         order_type,
+         order_type_code,
+         created_at)
+              VALUES   (#{linkman},
+           #{linkphone},
+           #{address},
+           #{service_id},
+          #{note},
+          #{no},
+          #{payment_status},
+          #{status},
+          #{openid},
+          #{user_id},
+          #{order_type},
+          #{order_type_code},
+          #{created_at}
+          );
+
+    </insert>
+
+    <select id="checkOrdersbyuserId" resultType="com.weixin.pojo.Orders" parameterType="java.lang.String" >
+select  o.id As id,
+        o.linkman AS linkman ,
+        o.linkphone AS linkphone,
+         o.address AS address,
+         o.service_id AS service_id,
+         o.note AS note,
+         o.no AS no,
+         o.status AS status,
+         o.user_id AS user_id,
+         o.order_type AS order_type,
+         o.created_at as created_at,
+         o.total AS total,
+         o.payment_status AS payment_status,
+         o.order_type_code AS order_type_code,
+         s.name AS name
+          from  orders o INNER JOIN services s on o.service_id = s.id
+         where o.openid=#{openid}
+         ORDER BY o.created_at DESC;
+
+    </select>
+   <update id="cancelOrderByUid" parameterType="int" >
+       UPDATE orders SET `status` = "QUIT" where id=#{id}
+
+   </update>
+
+    <select id="queryOrderStatus" parameterType="int" resultType="java.lang.String">
+        SELECT `status`
+        from orders
+        where id = #{id}
+    </select>
+
+    <select id="findUidByPhone" resultType="java.lang.Integer" parameterType="java.lang.String">
+        SELECT id
+from users
+where telephone= #{telephone}
+    </select>
+
+    <insert id="addUser" parameterType="com.weixin.pojo.Customer" >
+
+
+
+ INSERT INTO users
+ (name,
+ sex,
+ telephone,
+ address,
+ status,
+ credit,
+ created_at,
+ updated_at)
+ VALUES(#{name},
+ #{sex},
+ #{telephone},
+ #{address},
+ #{status},
+ #{credit},
+ #{created_at},
+ #{updated_at}
+ )
+
+        <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER">
+            select  LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+
+
+</mapper>

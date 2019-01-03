@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+
+    <!-- 全局参数设置 -->
+    <settings>
+        <!-- 处理Debug：开启SQL语句，打印到console -->
+        <setting name="logImpl" value="STDOUT_LOGGING"/>
+        <!-- 延迟加载的总开关 -->
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <!-- 侵入式延迟加载开关 -->
+        <setting name="aggressiveLazyLoading" value="false"/>
+        <!-- 设置二级缓存不受增删改的影响 -->
+        <setting name="cacheEnabled" value="false"/>
+    </settings>
+
+
+</configuration>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns="http://java.sun.com/jsf/html" xmlns="http://www.w3.org/1999/html"
+      xml:lang="en" lang="en">
+<head>
+    <base href="<%=basePath%>">
+    <title>wx-page</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="css/basic.css" rel="stylesheet" type="text/css" />
+    <link href="css/dashboard.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="../wx/js/resources.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $.ajax({
+                url:address+"/company/showOrderByStatus",
+                data:{
+                    status: "ACCEPT",
+                },
+                dataType: "json",
+                async:false,
+                success:function (data) {
+                    let list = data.datas;
+                    if(list.length==0){
+                        alert("暂无订单信息");
+                    }
+                    console.log("成功获取列表");
+                    console.log(list);
+                    async :false;
+                    let str="";
+                    $.each(list,function (i,item) {
+                        str+="<div class=\"wx-order\">\n" +
+                            "        <div class=\"wx-order-title\">\n" +
+                            "            <span>" + list[i].name + "</span>\n" +
+                            "        </div>\n" +
+                            "        <div class=\"wx-order-content\">\n" +
+                            "            <div class=\"wx-order-middle\">\n" +
+                            "                <p class=\"time\">发布时间：<span>" + list[i].created_at + "</span></p>\n" +
+                            "                <div class=\"wx-order-middle-content\">\n" +
+                            "                    <img src=\"../wx/img/order.png\" class=\"order\">\n" +
+                            "                    <div class=\"wx-order-middle-right\">\n" +
+                            "                        <div class=\"wx-order-box\">\n" +
+                            "                            <span class=\"title\">服务内容：</span>\n" +
+                            "                            <p>" + list[i].name + "</p>\n" +
+                            "                        </div>\n" +
+                          /*  "                <div class=\"wx-order-box\">\n" +
+                            "                            <span class=\"title\">联系电话：</span>\n" +
+                            "                            <p>" + list[i].linkphone + "</p>\n" +
+                            "                        </div>\n" +*/
+                            "                        <div class=\"wx-order-shuoming\">\n" +
+                            "                            <span class=\"title\">特别说明：</span>\n" +
+                            "                            <p style=\"font-size:13px;\">" + list[i].note + "</p>\n" +
+                            "                        </div>\n" +
+                            "                    </div>\n" +
+                            "                    <div class=\"clear\"></div>\n" +
+                            "                </div>\n" +
+
+                            "                <div class=\"wx-order-bottom\">\n" +
+                            "                    <span>客户称呼：</span>\n" +
+                            "                    <p>" + list[i].linkman + "</p>\n" +
+                            "                </div>\n" +
+                         /*   "                <div class=\"wx-order-site\">\n" +
+                            "                    <img src=\"../wx/img/pin.png\" class=\"pin\">\n" +
+                            "                    <span>" + list[i].address + "</span>\n" +
+                            "                </div>\n" +*/
+
+
+
+                            "              <input type=\"hidden\" id='hidden_id' value="+item.id+" >\n"+
+                            "        <div class=\"wx-order-btn\">\n" +
+                            "            <div class=\"wx-order-btn-left\">\n" +
+                            '             <a href="javascript:;" onclick="change('+item.id+')">\n' +
+                            "                    <span id=\"change"+item.id+"\">抢单</span></a>\n" +
+                            "            </div>\n" +
+                            "        </div>\n" +
+                            "    </div>\n" +
+                            "</div>";
+                    })
+                    $(".grey-bg").html(str);
+                }
+            })
+        })
+        function change(id) {
+            console.log(id);
+            $.ajax({
+                url:address+"/company/editStatus",
+                data:{
+                    id:id,
+                    status:"PIE",
+                },
+                dataType:"json",
+                success:function (data) {
+                    let msg = data.status;
+                    if(msg=="success"){
+                        $("#change"+id+"").text('已抢单');
+                    }else{
+                        alert("你来晚了，抢单失败")
+                    }
+                }
+            })
+        }
+    </script>
+</head>
+<body class="grey-bg">
+
+</body>
+</html>

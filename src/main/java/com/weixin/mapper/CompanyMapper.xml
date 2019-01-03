@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.weixin.dao.CompanyDao">
+    <select id="getOrderByStatus"  parameterType="String" resultType="com.weixin.pojo.Orders">
+        SELECT o.created_at,o.linkman,o.linkphone,o.note,o.id,s.name name,o.address from orders o,services s where o.status=#{status} and o.service_id=s.id
+        order by o.created_at DESC
+    </select>
+    <select id="getOrderById" parameterType="int" resultType="com.weixin.pojo.Orders">
+        SELECT status from companies where id=#{id}
+    </select>
+    <!-- getOrderById到后面需要查整个订单时可以修改sql语句，返回对象是Orders  -->
+    <select id="getSalt" parameterType="String" resultType="String">
+        SELECT salt from companies where login=#{login}
+    </select>
+    <select id="getPwd" parameterType="String" resultType="String">
+        SELECT password from companies where login=#{login}
+    </select>
+    <update id="editStatus">
+        UPDATE orders SET status =#{status},company_id = #{cid} where id = #{id}
+    </update>
+
+
+
+    <select id="OrderBycompanyId" parameterType="int" resultType="com.weixin.pojo.Orders">
+      select
+        o.id AS  id,
+        o.linkman AS linkman ,
+        o.linkphone AS linkphone,
+         o.address AS address,
+         o.service_id AS service_id,
+         o.note AS note,
+         o.no AS no,
+         o.company_id As company_id,
+         o.status AS status,
+         o.user_id AS user_id,
+         o.order_type AS order_type,
+         o.created_at as created_at,
+         o.order_type_code AS order_type_code,
+         s.name AS name
+          from  orders o INNER JOIN services s on o.service_id = s.id
+         where o.company_id=#{company_id}
+         ORDER BY o.created_at DESC;
+    </select>
+
+    <update id="changeOrder" parameterType="java.lang.Integer">
+     UPDATE orders set status="DONE" where id=#{id};
+
+    </update>
+
+    <select id="getStatusById" resultType="String" parameterType="int">
+        SELECT STATUS FROM orders where id =#{id}
+    </select>
+    <select id="getCompanyByLogin"  parameterType="String" resultType="com.weixin.pojo.Company">
+        SELECT id,salt,password from companies where login =#{login}
+    </select>
+
+    <update id="setTotal" parameterType="com.weixin.pojo.Orders" >
+       UPDATE orders SET total = #{total},payment_status=1 where id=#{id}
+
+   </update>
+
+
+</mapper>

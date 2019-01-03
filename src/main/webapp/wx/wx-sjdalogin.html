@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>wx-page</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="css/basic.css" rel="stylesheet" type="text/css" />
+    <link href="css/dashboard.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="../wx/js/resources.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $.ajax({
+                url:address+"/company/verifyCompanyLogin",
+                data:{
+                },
+                dataType:"json",
+                success:function(data){
+                  //  alert(data.data);
+                 if (data.data=="logined"){
+                     window.location.href="wx-shangjiadingdan.html";
+                 }
+                }
+            })
+
+        })
+
+
+       function f() {
+           var login = $("#login").val();
+           var password = $("#password").val();
+
+           $.ajax({
+               url:address+"/company/checkPwd",
+               data:{
+                   login:login,
+                   password:password,
+               },
+               dataType:"json",
+               success:function(data){
+                   console.log(data.status)
+                   if(data.status=="true"){
+                       window.location.href="wx-shangjiadingdan.html";
+                   }else {
+                       alert("错错错");
+                   }
+               }
+           })
+       }
+    </script>
+    <!--
+    <script type="text/javascript">
+        function company() {
+            let login = $("#login").val();
+            let password = $("#password").val();
+            $("#companyLogin").attr("href", "/company/checkPwd?login="+ login + "&password=" + password + "");
+        }
+    </script>
+    -->
+</head>
+<body>
+    <div class="wx-dashboard">
+        <div class="wx-jiameng">
+            <img src="img/wx-login.png" class="login">
+            <div class="wx-login-user">
+                <img src="img/login-user.png" class="user">
+                <input placeholder="用户名" class="login-name" id="login">
+            </div>
+            <div class="wx-login-user">
+                <img src="img/login-pw.png" class="user">
+                <input style="password"  placeholder="密码" class="login-name" id="password">
+            </div>
+            <div class="wx-next">
+                <a href="javascript:;" onclick="f()">登录</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

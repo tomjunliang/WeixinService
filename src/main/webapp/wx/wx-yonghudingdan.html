@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>wx-page</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="../wx/css/basic.css" rel="stylesheet" type="text/css" />
+    <link href="../wx/css/dashboard.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="../wx/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../wx/js/resources.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $(".grey-bg").empty();
+            $.ajax({
+                url:address+"/customer/checkOrder",
+                data:{},
+                dataType:"json",
+                error:function (){
+                    alert("出错了");
+                },
+                success:function(data){
+                    if(data.datas.length==0){
+                        alert("还没有订单信息");
+                    }else{
+                        var list = data.datas;
+                        var str = "";
+
+
+                        for (var i = 0; i < list.length; i++) {
+                            var status="";
+                            var total="";
+                            if (list[i].status == "DONE") {
+                                if(list[i].payment_status==0){
+                                    status = "                    <div class=\"wx-order-btn-left\"><a href=\"#\">已完成</a></div>\n" +
+                                              " <div class=\"wx-order-btn-middle\"><a href=\"#\">未支付</a></div>"+
+                                        "                    <div class=\"wx-order-btn-right\"><a href=\"#\">评价</a></div>\n";
+                                }else {
+                                     total="<div class=\"wx-order-box\">\n" +
+                                         "                            <span class=\"title\">订单价格：</span>\n" +
+                                         "                            <p><span class=\"price\">￥"+list[i].total+"</span></p>\n" +
+                                         "                        </div>";
+                                    status = "                    <div class=\"wx-order-btn-left\"><a href=\"#\">已完成</a></div>\n" +
+                                            " <div class=\"wx-order-btn-middle\"><a href=\"#\">已支付</a></div>"+
+                                        "                    <div class=\"wx-order-btn-right\"><a href=\"#\">评价</a></div>\n";
+                                }
+                            } else if(list[i].status == "ACCEPT"){
+                                status = "                    <div class=\"wx-order-btn-left\"><a href=\"#\">未抢单</a></div>\n"+
+                                    "<div class=\"wx-order-btn-middle\"><a href=\"#\">未支付</a></div>\n" +
+                                    "                    <div class=\"wx-order-btn-right\"><a href=\"javascript:\" onclick='camcel(" + list[i].id + ")'><span id='orderstatus'>取消</span></a></div>";
+
+                            }else if(list[i].status == "PIE"){
+                                status = "                    <div class=\"wx-order-btn-left\"><a href=\"#\">已派送</a></div>\n"+
+                                    "<div class=\"wx-order-btn-middle\"><a href=\"#\">未支付</a></div>\n";
+
+                            }else if(list[i].status =="QUIT"){
+                                status = "                    <div class=\"wx-order-btn-left\"><a href=\"#\">已取消</a></div>\n"+
+                                    "</div>\n";
+                            }
+
+
+                            str += "<div class=\"wx-order\">\n" +
+                                "        <div class=\"wx-order-title\">\n" +
+                                "            <span>" + list[i].name + "</span>\n" +
+                                "        </div>\n" +
+                                "        <div class=\"wx-order-content\">\n" +
+                                "            <div class=\"wx-order-middle\">\n" +
+                                "                <p class=\"time\">发布时间：<span>" + list[i].created_at + "</span></p>\n" +
+                                "                <div class=\"wx-order-middle-content\">\n" +
+                                "                    <img src=\"../wx/img/order.png\" class=\"order\">\n" +
+                                "                    <div class=\"wx-order-middle-right\">\n" +
+                                "                        <div class=\"wx-order-box\">\n"+
+                                "                            <span class=\"title\">服务内容：</span>\n" +
+                                "                            <p>" + list[i].name + "</p>\n" +
+                                "                        </div>\n" +total+
+                                "                <div class=\"wx-order-box\">\n" +
+                                "                            <span class=\"title\">联系电话：</span>\n" +
+                                "                            <p>"+list[i].linkphone+"</p>\n" +
+                                "                        </div>\n"+
+                                "                        <div class=\"wx-order-shuoming\">\n" +
+                                "                            <span class=\"title\">特别说明：</span>\n" +
+                                "                            <p style=\"font-size:13px;\">" + list[i].note + "</p>\n" +
+                                "                        </div>\n" +
+                                "                    </div>\n" +
+                                "                    <div class=\"clear\"></div>\n" +
+                                "                </div>\n" +
+
+                                "                <div class=\"wx-order-bottom\">\n" +
+                                "                    <span>客户称呼：</span>\n" +
+                                "                    <p>" + list[i].linkman + "</p>\n" +
+                                "                </div>\n" +
+                                "                <div class=\"wx-order-site\">\n" +
+                                "                    <img src=\"../wx/img/pin.png\" class=\"pin\">\n" +
+                                "                    <span>" + list[i].address + "</span>\n" +
+                                "                </div>\n" +
+                                "                <div class=\"wx-order-btn\">\n" + status +
+                                "                </div>\n" +
+                                "            </div>\n" +
+                                "        </div>\n" +
+                                "    </div>";
+                        }
+
+                        $(".grey-bg").html(str);
+                    }
+
+                }
+            })
+
+
+        })
+
+    </script>
+</head>
+
+<body class="grey-bg">
+    <div class="wx-order">
+        <div class="wx-order-title">
+            <span>钟点工</span>
+        </div>
+        <div class="wx-order-content">
+            <div class="wx-order-middle">
+                <p class="time">发布时间：<span>2018-06-28 09:16:44</span></p>
+                <div class="wx-order-middle-content">
+                    <img src="img/order.png" class="order">
+                    <div class="wx-order-middle-right">
+                        <div class="wx-order-box">
+                            <span class="title">订单价格：</span>
+                            <p><span class="price">￥3200</span></p>
+                        </div>
+                        <div class="wx-order-box">
+                            <span class="title">服务内容：</span>
+                            <p>日常保洁</p>
+                        </div>
+                        <div class="wx-order-box">
+                            <span class="title">服务次数：</span>
+                            <p>一周三次</p>
+                        </div>
+                        <div class="wx-order-box">
+                            <span class="title">服务时长：</span>
+                            <p><span class="hour">2</span>小时</p>
+                        </div>
+                        <div class="wx-order-box">
+                            <span class="title">工作时间段：</span>
+                            <p>18:00-20:00</p>
+                        </div>
+                        <div class="wx-order-shuoming">
+                            <span class="title">特别说明：</span>
+                            <p style="font-size:13px;">无特殊要求</p>
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <div class="wx-order-bottom">
+                    <span>客户称呼：</span>
+                    <p>竺小姐</p>
+                </div>
+                <div class="wx-order-site">
+                    <img src="img/pin.png" class="pin">
+                    <span>世贸外滩新城</span>
+                </div>
+                <div class="wx-order-btn">
+                    <div class="wx-order-btn-left"><a href="#">已完成</a></div>
+                    <div class="wx-order-btn-middle"><a href="#">已支付</a></div>
+                    <div class="wx-order-btn-right"><a href="#">评价</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="wx-order">
+        <div class="wx-order-title">
+            <span>钟点工</span>
+        </div>
+        <div class="wx-order-content">
+            <div class="wx-order-middle">
+                <p class="time">发布时间：<span>2018-06-28 09:16:44</span></p>
+                <div class="wx-order-middle-content">
+                    <img src="img/order.png" class="order">
+                    <div class="wx-order-middle-right">
+                        <div class="wx-order-box">
+                            <span class="title">订单价格：</span>
+                            <p><span class="price">￥3200</span></p>
+                        </div>
+                        <div class="wx-order-box">
+                            <span class="title">服务内容：</span>
+                            <p>日常保洁</p>
+                        </div>
+                        <div class="wx-order-box">
+                            <span class="title">服务次数：</span>
+                            <p>一周三次</p>
+                        </div>
+                        <div class="wx-order-box">
+                            <span class="title">服务时长：</span>
+                            <p><span class="hour">2</span>小时</p>
+                        </div>
+                        <div class="wx-order-box">
+                            <span class="title">工作时间段：</span>
+                            <p>18:00-20:00</p>
+                        </div>
+                        <div class="wx-order-shuoming">
+                            <span class="title">特别说明：</span>
+                            <p style="font-size:13px;">无特殊要求</p>
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <div class="wx-order-bottom">
+                    <span>客户称呼：</span>
+                    <p>竺小姐</p>
+                </div>
+                <div class="wx-order-site">
+                    <img src="img/pin.png" class="pin">
+                    <span>世贸外滩新城</span>
+                </div>
+                <div class="wx-order-btn">
+                    <div class="wx-order-btn-left"><a href="#">已完成</a></div>
+                    <div class="wx-order-btn-middle"><a href="#">已支付</a></div>
+                    <div class="wx-order-btn-right"><a href="#">评价</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript">
+    function camcel(id) {
+        $.ajax({
+            url:address+"/customer/cancelOrderByUid",
+            data:{id:id},
+            dataType:"json",
+            error:function(){
+                alert("取消失败");
+            },
+            success:function(data){
+                if(data.status=="success"){
+                   alert("取消成功");
+
+
+                }else {
+                    alert("已派单，无法取消")
+                }
+
+                window.location.reload();
+            }
+        })
+    }
+</script>
+
+
+</html>

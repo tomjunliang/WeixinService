@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>wx-page</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="css/basic.css" rel="stylesheet" type="text/css" />
+    <link href="css/dashboard.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="../wx/js/resources.js"></script>
+    <script  type="text/javascript" >
+       function entryTotal() {
+
+           var id = decodeURIComponent(location.href.split('=')[1]);
+           id = id.split('#')[0];
+           var total = $(".input-word").val();
+           $.ajax({
+               url:address+"/company/setOrderTotal",
+               data:{total:total,id:id},
+               dataType:"json",
+               success:function(data){
+                  alert("录入成功")
+                   window.location.href="wx-shangjiadingdan.html";
+               }
+           })
+       }
+
+
+    </script>
+
+</head>
+<body>
+    <div class="wx-dashboard">
+        <div class="wx-jiameng">
+            <div class="contact-box contact-name">
+                <span class="name">价格</span>
+                <input placeholder="请录入本次订单价格" class="input-word">
+            </div>
+            <div class="wx-next">
+                <a href="javascript:;" onclick="entryTotal()">录入</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>wx-page</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="css/basic.css" rel="stylesheet" type="text/css" />
+    <link href="css/dashboard.css" rel="stylesheet" type="text/css" />
+
+    <script type="text/javascript" src="https://cdn.bootcss.com/zepto/1.0rc1/zepto.min.js"></script>
+    <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+    <script type="text/javascript" src="../wx/js/resources.js"></script>
+    <script type="text/javascript">
+
+    $(document).ready(function() {
+     var currurl = decodeURIComponent(location.href.split('#')[0]);
+        //ajax注入权限验证
+    $.ajax({
+    type: 'POST',   //请求方式
+    url : address+"/AccessWx/getWXconfig",
+    dataType : 'json',
+    data : {"url": currurl},
+    complete : function(XMLHttpRequest, textStatus) {},
+    error : function(XMLHttpRequest, textStatus, errorThrown) {
+    alert("发生错误：" + errorThrown+"XMLHttpRequeststatus:"+XMLHttpRequest.status+"XMLHttpRequest.readyState:"+XMLHttpRequest.readyState+"textStatus:"+textStatus);
+    },
+    success : function(res) {
+
+    var appId = res.appId;
+    var nonceStr = res.nonceStr;
+    var jsapi_ticket = res.jsapi_ticket;
+    var timestamp = res.timestamp;
+    var signature = res.signature;
+    //alert("appId:"+appId +"------- " +"nonceStr:"+ nonceStr +" -----"+"jsapi_ticket:"+jsapi_ticket+"------ "+"timestamp:"+timestamp+"------- "+"signature:"+signature);
+    wx.config({
+    debug : false, //开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+    appId : appId, //必填，公众号的唯一标识
+    timestamp : timestamp, // 必填，生成签名的时间戳
+    nonceStr : nonceStr, //必填，生成签名的随机串
+    signature : signature, // 必填，签名，见附录1
+    jsApiList : [ 'startRecord', 'stopRecord','translateVoice'] //必填，需要使用的JS接口列表，所有JS接口列表 见附录2
+    }); // end wx.config
+
+
+    wx.ready(function() {
+
+        var isRecord = false;
+    $(".voice-box").tap(function () {
+        if(!isRecord) {
+            $("#voi").html('录音中,点击结束录音');
+            //开始录音
+            wx.startRecord();
+            isRecord =true;
+        }else {
+
+            //结束录音
+            wx.stopRecord({
+
+                success: function (res) {
+
+                    var localId = res.localId;
+
+
+
+                    wx.translateVoice({
+
+                        localId: localId, // 需要识别的音频的本地Id，由录音相关接口获得
+
+                        isShowProgressTips: 1, // 默认为1，显示进度提示
+
+                        success: function (res) {
+
+                            alert(res.translateResult); // 语音识别的结果
+                           $("#comment").val(res.translateResult);
+
+
+                        }
+
+                    });
+                    $("#voi").html('录音结束，点击重新录音');
+                    isRecord = false;
+                }
+
+            });
+
+        }
+    })
+
+
+    }); // end ready
+
+    wx.error(function(res) {
+    // config信息验证失败会执行error函数，如签名过期导致验证失败，具体错误信息可以打开config的debug模式查看，也可以在返回的res参数中查看，对于SPA可以在这里更新签名。
+    alert("error:"+res);
+    });
+    } // end success
+    }); // end ajax
+
+    });  // end document
+
+    function createOrder() {
+        var linkman=$("#linkman").val();
+        var linkphone =$("#linkphone").val();
+        var addresss =$("#address").val();
+        var note =$("#comment").val();
+        var service_id = decodeURIComponent(location.href.split('=')[1]);
+        service_id = service_id.split('#')[0];
+      //  alert(service_id);
+        $.ajax({
+            url:address+"/customer/creatOrder",
+            data:{"linkman":linkman,"linkphone":linkphone,"addresss":addresss,"note":note,"service_id":service_id},
+            dataType:"json",
+            error:function () {
+               alert("网络异常");
+
+            },
+            success:function(data){
+
+                window.location.href = "wx-udingdan.html";
+            }
+
+        })
+
+
+    }
+
+
+
+    </script>
+
+</head>
+<body class="grey-bg">
+    <div class="score-head" style="margin-bottom:10px;">
+        <div class="score-head-content">
+            <h1>填写需求详情</h1>
+        </div>
+    </div>
+    <div class="wx-jiameng" style="background: #fff;width: 100%;padding-bottom: 30px;">
+        <div class="wx-xuqiu">
+        <!--    <div class="command-box">
+                <span class="name">您需要的保洁类型为：</span>
+                <div class="command-tab">
+                    <ul>
+                        <li class="active">日常打扫</li>
+                        <li>深度保洁</li>
+                        <li>装修后首次保洁</li>
+                        <li>其他情况</li>
+                        <div class="clear"></div>
+                    </ul>
+                </div>
+            </div>-->
+            <!--     <div class="command-box">
+                   <span class="name">您需要的保洁面积为：</span>
+                   <div class="command-tab">
+                       <ul>
+                           <li class="active" style="width: 30%;">60平方以内</li>
+                           <li style="width: 30%;">60平方—100平方</li>
+                           <li style="width: 30%;">100平方—200平方</li>
+                           <li style="width: 30%;">200平方以上</li>
+                           <div class="clear"></div>
+                       </ul>
+                   </div>
+               </div>-->
+            <!--  <div class="command-box">
+                  <span class="name">您希望什么时候为您进行保洁服务：</span>
+                  <div class="command-tab">
+                      <ul>
+                          <li class="active">越快越好</li>
+                          <li>一周以内</li>
+                          <li>其他时间说明</li>
+                          <div class="clear"></div>
+                      </ul>
+                  </div>
+              </div>-->
+              <div class="command-address-box">
+                  <span class="name">所在地址</span>
+                  <div class="command-address-box-right">
+                      <input placeholder="" class="input-word" id="address">
+                      <!-- <span>请选择您的服务地址</span>
+                         <img src="img/reg-arrow.png" width="10px" height="10px">-->
+
+                 </div>
+             </div>
+             <div class="about-box">
+                 <span class="name" >您还有其他方面需要特别说明的吗？</span>
+               <textarea name="comment" id="comment" form="usrform" class="scale-comment" placeholder="请输入..."></textarea>
+                 <!-- <input type="text" class="scale-comment" name="comment" placeholder="请输入..."/>-->
+            </div>
+            <div class="voice-box" >
+                <span id="voi">文字描述不清楚，打字不方便？试试语音吧</span>
+                <div class="voice-button">
+                    <img src="img/wx-voice.png" width="50px" height="50px" id="touchRecord">
+                </div>
+            </div>
+            <div class="command-address-box">
+                <span class="name"  style="width: 70px;">如何称呼您</span>
+                <input class="input-word" id="linkman" >
+            </div>
+            <div class="command-address-box">
+                <span class="name" style="width: 70px;">联系方式</span>
+                <input placeholder="请输入手机号码" class="input-word" id="linkphone">
+                <div class="command-address-box-yanzhen">
+                    <span class="yanzhen"><a>获取验证</a></span>
+                </div>
+            </div>
+            <div class="wx-next">
+                <a href="javascript:;" onclick="createOrder()">提交</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

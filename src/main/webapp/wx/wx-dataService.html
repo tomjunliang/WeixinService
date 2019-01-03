@@ -1,0 +1,53 @@
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>wx-page</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="../wx/css/basic.css" rel="stylesheet" type="text/css" />
+    <link href="../wx/css/dashboard.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="../wx/js/resources.js"></script>
+    <script type="text/javascript" src="../wx/js/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            var service_id = decodeURIComponent(location.href.split('=')[1]);
+            service_id = service_id.split('#')[0];
+        //    alert(service_id);
+            $.ajax({
+                url:address+"/customer/chooseService",
+                data:{id:service_id},
+                dataType:"json",
+                success:function(data){
+                 var list = data.datas;
+                 $(".bodaUl").empty();
+                 var str="";
+                 for(var i =0;i<list.length;i++){
+                   //  alert(list[i].node);
+                     str +=" <li>\n" +
+                     "                <div class=\"wx-dashboard-content\" onclick=\"window.open('../wx/wx-xuqiu.html?id="+list[i].id+"','_self')\">" +
+                     "                    <div class=\"wx-dashboard-left\">\n" +
+                     "                        <h2>"+list[i].name+"</h2>\n" //+list[i].note+
+                    + " <p>"+list[i].name+"</p>"
+                    + "                    </div>\n" +
+                   //  "                    <img src='../wx/"+list[i].photo+"' class=\"right\">\n" +
+                     "                </div>\n" +
+                     "            </li>"
+                 }
+
+                $(".bodaUl").html(str);
+
+
+                }
+            })
+        })
+    </script>
+</head>
+<body>
+    <div class="wx-dashboard">
+        <ul class="bodaUl">
+
+        </ul>
+    </div>
+</body>
+</html>
